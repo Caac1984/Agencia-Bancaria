@@ -62,7 +62,7 @@ public class AgenciaBancaria {
         while (true) {
             System.out.println("\nNome: ");
             nome = input.next();
-            
+
             // Validação do nome
             if (nome.matches("[a-zA-ZÀ-ÿ ]+")) {
                 break; // Nome válido, sai do loop
@@ -70,12 +70,12 @@ public class AgenciaBancaria {
                 System.out.println("O nome deve conter apenas letras e espaços. Tente novamente.");
             }
         }
-    
+
         String cpf;
         while (true) {
             System.out.println("\nCPF: ");
             cpf = input.next();
-            
+
             // Validação do cpf para aceitar apenas números
             if (cpf.matches("\\d+")) { // Verifica se o CPF contém apenas dígitos
                 break; // CPF válido, sai do loop
@@ -83,15 +83,15 @@ public class AgenciaBancaria {
                 System.out.println("O CPF deve conter apenas números. Tente novamente.");
             }
         }
-    
+
         System.out.println("Email: ");
         String email = input.next();
-    
+
         Pessoa cliente = new Pessoa(nome, cpf, email);
         Conta conta = new Conta(cliente);
         contasBancarias.add(conta);
         System.out.println("--- Sua conta foi criada com sucesso! ---");
-    
+
         operacoes();
     }
 
@@ -114,18 +114,12 @@ public class AgenciaBancaria {
 
         if (conta != null) {
             System.out.println("Qual valor deseja depositar? ");
-            Double valorDeposito = input.nextDouble();
+            double valorDeposito = input.nextDouble();
 
-            // Criar uma thread para a operação
             Operacao operacao = new Operacao(conta, valorDeposito, "depositar");
-            Thread thread = new Thread(operacao);
-            thread.start();
+            new Thread(operacao).start();
 
-            try {
-                thread.join(); // Espera a thread terminar
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            // Não é necessário esperar a thread terminar aqui
         } else {
             System.out.println("--- Conta não encontrada ---");
         }
@@ -140,18 +134,12 @@ public class AgenciaBancaria {
 
         if (conta != null) {
             System.out.println("Qual valor deseja sacar? ");
-            Double valorSaque = input.nextDouble();
+            double valorSaque = input.nextDouble();
 
-            // Criar uma thread para a operação
             Operacao operacao = new Operacao(conta, valorSaque, "sacar");
-            Thread thread = new Thread(operacao);
-            thread.start();
+            new Thread(operacao).start();
 
-            try {
-                thread.join(); // Espera a thread terminar
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            // Não é necessário esperar a thread terminar aqui
         } else {
             System.out.println("--- Conta não encontrada ---");
         }
@@ -162,7 +150,6 @@ public class AgenciaBancaria {
     public static void transferir() {
         System.out.println("Número da conta que vai enviar a transferência: ");
         int numeroContaRemetente = input.nextInt();
-
         Conta contaRemetente = encontrarConta(numeroContaRemetente);
 
         if (contaRemetente != null) {
@@ -173,8 +160,12 @@ public class AgenciaBancaria {
 
             if (contaDestinatario != null) {
                 System.out.println("Valor da transferência: ");
-                Double valor = input.nextDouble();
-                contaRemetente.transferencia(contaDestinatario, valor);
+                double valor = input.nextDouble();
+
+                Operacao operacao = new Operacao(contaRemetente, valor, "transferir");
+                new Thread(operacao).start();
+
+                // Não é necessário esperar a thread terminar aqui
             } else {
                 System.out.println("--- A conta para depósito não foi encontrada ---");
             }
@@ -182,6 +173,7 @@ public class AgenciaBancaria {
         } else {
             System.out.println("--- Conta para transferência não encontrada ---");
         }
+
         operacoes();
     }
 
