@@ -6,5 +6,3 @@ javac -d . main/*.java main/model/*.java
 java main.AgenciaBancaria
 
 # Exemplo de conta bancaria: https://www.youtube.com/watch?v=AExKQiCqwGs
-
-# Auxilio do chatgpt para implementação da threads.
